@@ -1,8 +1,11 @@
 {
     "compilerOptions": {
-        "target": "ES6",
-        "module": "ES2020",
-        "types": ["vite/client"]
+        "target": "ESNext",
+        "module": "ESNext",
+        "types": ["vite/client"],
+        "outDir": "lib",
+        "declaration": true,
+        "declarationDir": "lib",
     },
-    "include": ["index.ts"]
+    "include": ["src/index.ts"],
 }
