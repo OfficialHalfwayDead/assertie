@@ -1,0 +1,36 @@
+{
+  "name": "assertie",
+  "version": "0.1.0",
+  "description": "Debug assertions for TypeScript, auto tree-shaken by vite for production.",
+  "keywords": [
+    "TypeScript",
+    "vite",
+    "debug",
+    "assert"
+  ],
+  "homepage": "https://github.com/OfficialHalfwayDead/assertie#readme",
+  "bugs": {
+    "url": "https://github.com/OfficialHalfwayDead/assertie/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OfficialHalfwayDead/assertie.git"
+  },
+  "license": "MIT",
+  "author": "halfie",
+  "type": "module",
+  "main": "./index.ts",
+  "exports": "./index.ts",
+  "sideEffects": false,
+  "peerDependencies": {
+    "typescript": ">=3.7.0",
+    "vite": ">=2.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "vite": "^6.1.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
