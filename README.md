@@ -95,14 +95,14 @@ const good: string = value; // no `as` needed
 You don't need to use strings to narrow primitives. There are specific functions for specific types if you prefer that.
 
 ```ts
-assertTypeofString("yup");
-assertTypeofNumber(123);
-assertTypeofBoolean(true);
-assertTypeofBigint(123n);
-assertTypeofUndefined(undefined);
-assertTypeofFunction(() => {});
-assertTypeofObject({});
-assertTypeofSymbol(Symbol("yup"));
+assertTypeOfString("yup");
+assertTypeOfNumber(123);
+assertTypeOfBoolean(true);
+assertTypeOfBigint(123n);
+assertTypeOfUndefined(undefined);
+assertTypeOfFunction(() => {});
+assertTypeOfObject({});
+assertTypeOfSymbol(Symbol("yup"));
 assertInstanceOf(new Date(), Date);
 ```
 

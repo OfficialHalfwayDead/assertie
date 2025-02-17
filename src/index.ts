@@ -50,43 +50,43 @@ export function assertType<T extends AllJSTypes>(obj: unknown, expectedType: T):
     throw new AssertionError(`Provided object was not of type ${(typeof expectedType !== "string") ? expectedType?.name : expectedType ?? expectedType}. Was: ${(obj === null) ? "null" : obj?.constructor?.name ?? typeof obj}, value: ${obj}`);
 }
 
-export function assertTypeofString(obj: unknown): asserts obj is string {
+export function assertTypeOfString(obj: unknown): asserts obj is string {
     if (!import.meta.env.DEV) return;
     if (typeof obj !== "string") throw new AssertionError(`Provided object was not of type string. Was: ${typeof obj}`);
 }
 
-export function assertTypeofNumber(obj: unknown): asserts obj is number {
+export function assertTypeOfNumber(obj: unknown): asserts obj is number {
     if (!import.meta.env.DEV) return;
     if (typeof obj !== "number") throw new AssertionError(`Provided object was not of type number. Was: ${typeof obj}`);
 }
 
-export function assertTypeofBoolean(obj: unknown): asserts obj is boolean {
+export function assertTypeOfBoolean(obj: unknown): asserts obj is boolean {
     if (!import.meta.env.DEV) return;
     if (typeof obj !== "boolean") throw new AssertionError(`Provided object was not of type boolean. Was: ${typeof obj}`);
 }
 
-export function assertTypeofBigint(obj: unknown): asserts obj is bigint {
+export function assertTypeOfBigint(obj: unknown): asserts obj is bigint {
     if (!import.meta.env.DEV) return;
     if (typeof obj !== "bigint") throw new AssertionError(`Provided object was not of type bigint. Was: ${typeof obj}`);
 }
 
-export function assertTypeofUndefined(obj: unknown): asserts obj is undefined {
+export function assertTypeOfUndefined(obj: unknown): asserts obj is undefined {
     if (!import.meta.env.DEV) return;
     if (typeof obj !== "undefined") throw new AssertionError(`Provided object was not of type undefined. Was: ${typeof obj}`);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-export function assertTypeofFunction(obj: unknown): asserts obj is Function {
+export function assertTypeOfFunction(obj: unknown): asserts obj is Function {
     if (!import.meta.env.DEV) return;
     if (typeof obj !== "function") throw new AssertionError(`Provided object was not of type function. Was: ${typeof obj}`);
 }
 
-export function assertTypeofObject(obj: unknown): asserts obj is object {
+export function assertTypeOfObject(obj: unknown): asserts obj is object {
     if (!import.meta.env.DEV) return;
     if (typeof obj !== "object") throw new AssertionError(`Provided object was not of type object. Was: ${typeof obj}`);
 }
 
-export function assertTypeofSymbol(obj: unknown): asserts obj is symbol {
+export function assertTypeOfSymbol(obj: unknown): asserts obj is symbol {
     if (!import.meta.env.DEV) return;
     if (typeof obj !== "symbol") throw new AssertionError(`Provided object was not of type symbol. Was: ${typeof obj}`);
 }
