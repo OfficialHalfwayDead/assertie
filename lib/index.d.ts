@@ -28,6 +28,7 @@ export declare function assertTypeOfUndefined(obj: unknown): asserts obj is unde
 export declare function assertTypeOfFunction(obj: unknown): asserts obj is Function;
 export declare function assertTypeOfObject(obj: unknown): asserts obj is object;
 export declare function assertTypeOfSymbol(obj: unknown): asserts obj is symbol;
+export declare function assertNull(obj: unknown): asserts obj is null;
 export declare function assertInstanceOf<T>(obj: unknown, constructable: Constructor<T>): asserts obj is T;
 export declare function assertUnreachable(obj: never, msg?: string): asserts obj is never;
 export declare function assertPropsNonNullable<T, N extends NullableKeys<T>>(obj: T, props: N[]): asserts obj is PropsNonNullable<T, N>;

@@ -100,6 +100,7 @@ assertTypeOfNumber(123);
 assertTypeOfBoolean(true);
 assertTypeOfBigint(123n);
 assertTypeOfUndefined(undefined);
+assertNull(null); // different because typeof null === "object"
 assertTypeOfFunction(() => {});
 assertTypeOfObject({});
 assertTypeOfSymbol(Symbol("yup"));

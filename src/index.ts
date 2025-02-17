@@ -91,6 +91,11 @@ export function assertTypeOfSymbol(obj: unknown): asserts obj is symbol {
     if (typeof obj !== "symbol") throw new AssertionError(`Provided object was not of type symbol. Was: ${typeof obj}`);
 }
 
+export function assertNull(obj: unknown): asserts obj is null {
+    if (!import.meta.env.DEV) return;
+    if (obj !== null) throw new AssertionError(`Provided object was not null. Was: ${obj}`);
+}
+
 export function assertInstanceOf<T>(obj: unknown, constructable: Constructor<T>): asserts obj is T {
     if (!import.meta.env.DEV) return;
     if (!(obj instanceof constructable)) throw new AssertionError(`Provided object was not of type ${constructable.name} but was type: ${(obj === null) ? "null" : obj?.constructor?.name ?? typeof obj}, value: ${obj}`);
