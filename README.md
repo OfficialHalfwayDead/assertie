@@ -2,15 +2,24 @@
 
 Debug assertions for TypeScript, auto tree-shaken by vite for production.
 
-Why? Because asserts are simple to read and safer than casting. Use them when you know something is guaranteed to be true, and assertie will make sure it is in dev builds. As programmers, we sometimes make wrong assumptions.
+Why? Because asserts are simple to read and safer than casting. As programmers, we sometimes make wrong assumptions. Use them when you know something is guaranteed to be true, and assertie will make sure it actually is in dev builds.
 
 ```ts
 import { assertInstanceOf } from "assertie";
 ...
+
 const original = document.getElementById("probably-mounted");
-if (original === null) return; // This isn't the place for an assert because the element isn't guaranteed to be present.
-const clone = original.cloneNode(true); // returns type Node but we know it'll always be an HTMLElement
+
+// If the element isn’t found, we exit here.
+// Asserts are not meant for validating uncertain values.
+if (original === null) return;
+
+// cloneNode returns type Node, but we know it will always
+// be an HTMLElement, because `original` was one.
+const clone = original.cloneNode(true);
 assertInstanceOf(clone, HTMLElement);
+// Unlike casting, the assert will throw if you were mistaken,
+// or if someone accidentally changed const original = document;
 clone.innerText = "No `as` cast needed! 0 overhead in production.";
 ```
 
@@ -53,7 +62,8 @@ const config: UserConfig = {
 ```ts
 import { assert } from "assertie";
 
-assert(typeof "yup" === "string", "optional text if assertion fails");
+const a = "yup";
+assert(a === "yup", "optional text if assertion fails");
 
 // You get type narrowing from assertie's assertions
 const x: boolean = true;
@@ -66,7 +76,8 @@ const y: true = x; // no error
 ```ts
 import { assertType } from "assertie";
 
-// assertType can take any primitive JS type string (e.g., "number", "string"), null, undefined, or a class/constructable
+// assertType can take null, undefined, a class/constructable 
+// or a primitive JS type string (e.g., "number")
 assertType(1, "number");
 assertType(() => {}, "function");
 assertType(undefined, "undefined");
@@ -105,7 +116,9 @@ let hoisted: string | null | undefined = null;
 const f =  () => {
     assertNonNullable(hoisted);
     // vs.
-    if (hoisted === null || hoisted === undefined) return;
+    if (hoisted === null || hoisted === undefined) {
+        return;
+    }
 
     console.log(hoisted.toUpperCase());
 };
@@ -116,10 +129,10 @@ f();
 
 There are multiple ways in which an assert is better in this specific case:
 
-1. Making the code intention clear. Your function was never meant to only run some of the time. It is always supposed to work. You only added the if statement to make the compiler happy.
-2. The assert will throw an error in dev if the case that should never happen does happen. Without an error, it would be easy to change how the hoisted variable is set, and the potential behavior change is more likely to go unnoticed.
+1. Making the code intention clear. `f` was never meant to only run its body some of the time. It is always supposed to work. But the if statement was required to make the compiler happy.
+2. The assert will throw an error in dev if the case that should never happen does happen. Without the assert, any potential behavior change due to `hoisted` not being set is more likely to go unnoticed.
 3. It's a little shorter, mainly if you have to check null and undefined and maybe have prettier rules for { brackets } on if statements.
-4. The assert will be removed in production, so there's no overhead. If that makes you uncomfortable, you can just leave both in.
+4. The assert will be removed in production, so there's no overhead. If that makes you uncomfortable, you can just can still put the if statement below the assert and reap the benefits of the first two points.
 
 ```ts
 // Sometimes not your entire object is null
@@ -138,11 +151,14 @@ const safeObj = obj;
 // typeof safeObj === { a: string, b: string, c: number }
 ```
 
-The reason an array is needed here is because undefined properties may not be present in `Object.keys`, so the caller needs to provide all keys to check. Don't worry about the safety, though. If you forget to pass a key, it will remain undefined/null after the assert.
+The reason an array is needed here is because undefined properties may not be present in `Object.keys`, so the caller needs to provide all keys to check. Don't worry about the safety, though. If you forget to pass a key, its type will remain nullable after the assert and TypeScript will not consider it safe to access.
 
 ### Asserting unreachable code
 
-The unreachable assertion can both help you ensure that switch/if statements are exhaustive at compile time and throw at runtime if the TypeScript types were inaccurate somewhere.
+The unreachable assertion will
+
+1. ensure switch/if statements are exhaustive at compile time.
+2. throw an error at runtime if TypeScript types are inaccurate.
 
 ```ts
 const x: "a" | "b" = "a";
@@ -165,8 +181,8 @@ For now, there is only one:
 
 ```ts
 assertFiniteNumber(123);
-// Ensures passed value is typeof number and finite
+// Ensures passed value is typeof number and isFinite(num)
 // DO NOT USE FOR INPUT VALIDATION OF USER PROVIDED VALUES!
 ```
 
-Useful for string-to-number conversions when you expect valid number strings. Prevents accidental usage of strings or invalid numbers due to JavaScript's loose equality (`123 == "123"`).
+Useful for string-to-number conversions when you expect **valid** number strings. Prevents accidental usage of strings or invalid numbers due to JS's loose equality (`123 == "123"`).
