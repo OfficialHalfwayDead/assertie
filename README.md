@@ -186,4 +186,12 @@ assertFiniteNumber(123);
 // DO NOT USE FOR INPUT VALIDATION OF USER PROVIDED VALUES!
 ```
 
-Useful for string-to-number conversions when you expect **valid** number strings. Prevents accidental usage of strings or invalid numbers due to JS's loose equality (`123 == "123"`).
+Can prevent `NaN` propagation and accidental infinities in calculations. Also useful for string-to-number conversions when you expect **valid** number strings:
+
+```ts
+const str = "CustomObject123";
+const numStr = str.substring(11); // oops "t123"
+const num = Number(numStr); // NaN
+assertFiniteNumber(num); // throws
+obj[num] = "yup" // disaster averted
+```
