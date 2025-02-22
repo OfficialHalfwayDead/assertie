@@ -38,7 +38,7 @@ export declare function assertTypeOfSymbol(obj: unknown): asserts obj is symbol;
 export declare function assertNull(obj: unknown): asserts obj is null;
 export declare function assertInstanceOf<T>(obj: unknown, constructable: Constructor<T>): asserts obj is T;
 export declare function assertUnreachable(obj: never, msg?: string): asserts obj is never;
-export declare function assertPropsNonNullable<T, N extends NullableKeys<T>>(obj: T, propKeys: N[]): asserts obj is PropsNonNullable<T, N>;
+export declare function assertPropsNonNullable<T extends object, N extends NullableKeys<T>>(obj: T, propKeys: N[]): asserts obj is PropsNonNullable<T, N>;
 /**
  * Asserts that all elements of the provided array are neither null nor undefined.
  * @param arr - The array to assert.

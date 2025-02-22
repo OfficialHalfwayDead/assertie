@@ -151,9 +151,11 @@ export function assertUnreachable(obj: never, msg: string = "Unreachable code of
     throw new AssertionError(msg);
 }
 
-export function assertPropsNonNullable<T, N extends NullableKeys<T>>(obj: T, propKeys: N[]): asserts obj is PropsNonNullable<T, N> {
+export function assertPropsNonNullable<T extends object, N extends NullableKeys<T>>(obj: T, propKeys: N[]): asserts obj is PropsNonNullable<T, N> {
     if (!import.meta.env.DEV) return;
     for (const propKey of propKeys) {
+        if (!(propKey in obj))
+            throw new AssertionError(`Provided object prop ${String(propKey)} should've been non-null but was not present at all.`);
         if (obj[propKey] === null || obj[propKey] === undefined)
             throw new AssertionError(`Provided object prop ${String(propKey)} should've been non-null but was: ${obj[propKey]}`);
     }
