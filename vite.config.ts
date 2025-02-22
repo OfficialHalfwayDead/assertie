@@ -3,9 +3,7 @@ import type { UserConfig } from "vite";
 const config: UserConfig = {
     build: {
         minify: false,
-        modulePreload: {
-            polyfill: false,
-        },
+        polyfillDynamicImport: false,
         rollupOptions: {
             treeshake: true,
         },
