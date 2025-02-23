@@ -1,3 +1,4 @@
+declare type Tuple<T, N extends number, A extends unknown[] = []> = A["length"] extends N ? A : Tuple<T, N, [...A, T]>;
 declare type PrimitiveTypes = {
     "string": string;
     "number": number;
@@ -39,6 +40,17 @@ export declare function assertType<T extends AllJSTypes>(item: unknown, expected
  * @throws {AssertionError} if the type isn't as expected.
  */
 export declare function assertArrayType<T extends AllJSTypes>(arr: unknown[], expectedType: T): asserts arr is ResolveAnyJSType<T>[];
+/**
+ * Asserts that the array or tuple has the expected types at each index.
+ * @param {unknown[] | [unknown, ...]} arrayOrTuple - The tuple which ought to be an array of the length and types.
+ * @param {[AllJSTypes, ...]} expectedTypes - A tuple of expected types of individual items, e.g., expectedTypes = ["number", "string", Date] => arrayOrTuple: [number, string, Date]. The individual entries can be JS primitive types, null, undefined, and constructors.
+ * @throws {AssertionError} if the type of any element of the tuple isn't as expected.
+ */
+export declare function assertTupleTypes<T extends readonly AllJSTypes[], U extends {
+    [K in keyof T]: unknown;
+} | (number extends U["length"] ? unknown[] : never)>(arrayOrTuple: U, expectedTypes: readonly [...T]): asserts arrayOrTuple is U & {
+    [K in keyof T]: ResolveAnyJSType<T[K]>;
+};
 /**
  * Asserts that the provided item is of type string.
  * @param {unknown} item - The item which ought to be of type string.
@@ -101,6 +113,13 @@ export declare function assertNull(item: unknown): asserts item is null;
  */
 export declare function assertInstanceOf<T>(item: unknown, constructor: Constructor<T>): asserts item is T;
 /**
+ * Asserts that the provided array is a tuple of exactly the expected length.
+ * @param {unknown[]} arr - The array which ought to be a tuple.
+ * @param {number} expectedLength - The exact expected length of the tuple.
+ * @throws {AssertionError} if the array isn't of the expected length or is sparse.
+ */
+export declare function assertIsTuple<T extends number extends T["length"] ? unknown[] : never, N extends number>(arr: [...T], expectedLength: N): asserts arr is T & Tuple<T[number], N>;
+/**
  * Used to assert that code can never be reached. Pass a value which has already been checked for all types that should be possible. If the range of possible values increases, TypeScript will throw an error at compile time because the value won't be of type never.
  * @param {never} item - An exhausted value, of which all cases are accounted for in other branches of the code, such as at the end of a switch statement.
  * @param {string} msg - Override the default error message. Even if you do, the error message will include the value and type of item.
@@ -126,6 +145,14 @@ export declare function assertPropsNonNullable<T extends object, N extends Nulla
  * @throws {AssertionError} if any of the elements was null, undefined, or not present in the array.
  */
 export declare function assertArrayNonNullable<T>(arr: T[]): asserts arr is NonNullable<T>[];
+/**
+ * Asserts that the provided tuple has non-null values for all elements. This function does not take a length. So if you want to assert that the typescript tuple type is of the correct length, call @see assertIsTuple first.
+ * @param {[unknown, ...]} tuple - The tuple which ought to have only non-null values.
+ * @throws {AssertionError} if any of the elements was null, undefined, or an index not present in the tuple.
+ */
+export declare function assertTupleNonNullable<T extends number extends T["length"] ? never : unknown[]>(tuple: T): asserts tuple is {
+    [K in keyof T]: NonNullable<T[K]>;
+};
 /**
  * Asserts that the provided item is a finite number. Use to prevent NaN propagation.
  * @param {unknown} item - The item which ought to be a finite number.

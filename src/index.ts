@@ -1,3 +1,7 @@
+// Creates a tuple of length N with all elements of type T
+type Tuple<T, N extends number, A extends unknown[] = []> =
+    A["length"] extends N ? A : Tuple<T, N, [...A, T]>;
+
 type PrimitiveTypes = {
     "string": string;
     "number": number;
@@ -125,6 +129,43 @@ export function assertArrayType<T extends AllJSTypes>(
                     expectedType
                 )}. Was: ${getTypeNameOfUnknown(item)}, value: ${item}`
             );
+    }
+}
+
+/**
+ * Asserts that the array or tuple has the expected types at each index.
+ * @param {unknown[] | [unknown, ...]} arrayOrTuple - The tuple which ought to be an array of the length and types.
+ * @param {[AllJSTypes, ...]} expectedTypes - A tuple of expected types of individual items, e.g., expectedTypes = ["number", "string", Date] => arrayOrTuple: [number, string, Date]. The individual entries can be JS primitive types, null, undefined, and constructors.
+ * @throws {AssertionError} if the type of any element of the tuple isn't as expected.
+ */
+export function assertTupleTypes<
+    T extends readonly AllJSTypes[],
+    U extends
+        | { [K in keyof T]: unknown } // [...unknown] matching length of [...T]
+        | (number extends U["length"] ? unknown[] : never) // Array with compile time unknown length
+>(
+    arrayOrTuple: U,
+    expectedTypes: readonly [...T]
+): asserts arrayOrTuple is U & { [K in keyof T]: ResolveAnyJSType<T[K]> } {
+    if (!import.meta.env.DEV) return;
+    if (arrayOrTuple.length !== expectedTypes.length) {
+        throw new AssertionError(
+            `Provided tuple length mismatch: expected ${expectedTypes.length}, but got ${arrayOrTuple.length}`
+        );
+    }
+    for (let i = 0; i < expectedTypes.length; i++) {
+        if (!(i in arrayOrTuple))
+            throw new AssertionError(
+                `Provided tuple was sparse with a missing item at required index ${i}`
+            );
+        const item = arrayOrTuple[i];
+        if (!isType(item, expectedTypes[i])) {
+            throw new AssertionError(
+                `Provided tuple had item at index ${i} not of type ${getNameOfExpectedType(
+                    expectedTypes[i]
+                )}. Was: ${getTypeNameOfUnknown(item)}, value: ${item}`
+            );
+        }
     }
 }
 
@@ -262,6 +303,30 @@ export function assertInstanceOf<T>(item: unknown, constructor: Constructor<T>):
 }
 
 /**
+ * Asserts that the provided array is a tuple of exactly the expected length.
+ * @param {unknown[]} arr - The array which ought to be a tuple.
+ * @param {number} expectedLength - The exact expected length of the tuple.
+ * @throws {AssertionError} if the array isn't of the expected length or is sparse.
+ */
+export function assertIsTuple<
+    T extends number extends T["length"] ? unknown[] : never,
+    N extends number
+>(arr: [...T], expectedLength: N): asserts arr is T & Tuple<T[number], N> {
+    if (!import.meta.env.DEV) return;
+    if (arr.length !== expectedLength) {
+        throw new AssertionError(
+            `Provided array is not a tuple of expected length ${expectedLength}. It has length ${arr.length}.`
+        );
+    }
+    for (let i = 0; i < expectedLength; i++) {
+        if (!(i in arr))
+            throw new AssertionError(
+                `Provided tuple is sparse and therefore not a tuple. Index ${i} is missing.`
+            );
+    }
+}
+
+/**
  * Used to assert that code can never be reached. Pass a value which has already been checked for all types that should be possible. If the range of possible values increases, TypeScript will throw an error at compile time because the value won't be of type never.
  * @param {never} item - An exhausted value, of which all cases are accounted for in other branches of the code, such as at the end of a switch statement.
  * @param {string} msg - Override the default error message. Even if you do, the error message will include the value and type of item.
@@ -341,6 +406,32 @@ export function assertArrayNonNullable<T>(arr: T[]): asserts arr is NonNullable<
             );
     }
 }
+
+/**
+ * Asserts that the provided tuple has non-null values for all elements. This function does not take a length. So if you want to assert that the typescript tuple type is of the correct length, call @see assertIsTuple first.
+ * @param {[unknown, ...]} tuple - The tuple which ought to have only non-null values.
+ * @throws {AssertionError} if any of the elements was null, undefined, or an index not present in the tuple.
+ */
+export function assertTupleNonNullable<T extends number extends T["length"] ? never : unknown[]>(
+    tuple: T
+): asserts tuple is { [K in keyof T]: NonNullable<T[K]> } {
+    if (!import.meta.env.DEV) return;
+    for (let i = 0; i < tuple.length; i++) {
+        if (!(i in tuple))
+            throw new AssertionError(
+                `Provided tuple should've been non-null but is sparse. Index ${i} is missing.`
+            );
+        if (tuple[i] === null)
+            throw new AssertionError(
+                `Provided tuple should've been non-null but had an item with value null at index ${i}`
+            );
+        if (tuple[i] === undefined)
+            throw new AssertionError(
+                `Provided tuple should've been non-null but had an undefined item at index ${i}`
+            );
+    }
+}
+
 
 /**
  * Asserts that the provided item is a finite number. Use to prevent NaN propagation.
