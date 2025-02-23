@@ -1,6 +1,6 @@
 {
   "name": "assertie",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Debug assertions for TypeScript, auto tree-shaken by vite for production.",
   "keywords": [
     "TypeScript",

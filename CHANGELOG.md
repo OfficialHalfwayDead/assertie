@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.3.1](https://github.com/OfficialHalfwayDead/assertie/compare/v0.3.0...v0.3.1) (2025-02-23)
+
+* [`0d59837`](https://github.com/OfficialHalfwayDead/assertie/commit/0d59837841707c963ce174e79a527fcb1379ac4f) Add array and tuple assertions to the README.
+
+
 ## [0.3.0](https://github.com/OfficialHalfwayDead/assertie/compare/v0.2.0...v0.3.0) (2025-02-23)
 
 ### Breaking Changes
@@ -16,6 +21,7 @@
 ### Other
 
 * [`075fecd`](https://github.com/OfficialHalfwayDead/assertie/commit/075fecd105030191eac671d8731765f4f5af2cd4) Add JSDoc comments to all functions and improve documentation overall.
+
 
 ## [0.2.0](https://github.com/OfficialHalfwayDead/assertie/compare/v0.1.0...v0.2.0) (2025-02-17)
 
