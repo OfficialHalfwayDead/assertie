@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.3.0](https://github.com/OfficialHalfwayDead/assertie/compare/v0.2.0...v0.3.0) (2025-02-23)
+
+### Breaking Changes
+
+* [`9906290`](https://github.com/OfficialHalfwayDead/assertie/commit/990629053a10e519c4d73ece8825f8edf7003489) assertie >= 0.3.0 requires TypeScript 4.7.0 or higher in your project.
+* [`b8ca296`](https://github.com/OfficialHalfwayDead/assertie/commit/b8ca296cb80c8e46db49af8256ea8bc1f76532e4) `assertPropsNonNullable` now only accepts objects as the first argument. This is technically a breaking change because TypeScript would have previously allowed passing anything to it, but it never made sense.
+
+### Features
+
+* [`7188088`](https://github.com/OfficialHalfwayDead/assertie/commit/71880883ecc0ecc110a6074b955dc2fc5fe806a5) More accurate print of the actual type of items when an assertion fails and significantly improved error messages overall.
+* [`7188088`](https://github.com/OfficialHalfwayDead/assertie/commit/71880883ecc0ecc110a6074b955dc2fc5fe806a5) Add type and non-null assertions for arrays that check all elements in one call and provide better typing and error messages: `assertArrayType`, `assertArrayNonNullable`.
+* [`9906290`](https://github.com/OfficialHalfwayDead/assertie/commit/990629053a10e519c4d73ece8825f8edf7003489) Add assertions for tuples that can narrow types of arrays or tuples with unknown types: `assertIsTuple`, `assertTupleTypes`, `assertTupleNonNullable`.
+
+### Other
+
+* [`075fecd`](https://github.com/OfficialHalfwayDead/assertie/commit/075fecd105030191eac671d8731765f4f5af2cd4) Add JSDoc comments to all functions and improve documentation overall.
+
 ## [0.2.0](https://github.com/OfficialHalfwayDead/assertie/compare/v0.1.0...v0.2.0) (2025-02-17)
 
 ### Breaking Changes

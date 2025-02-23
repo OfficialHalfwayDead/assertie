@@ -193,5 +193,5 @@ const str = "CustomObject123";
 const numStr = str.substring(11); // oops "t123"
 const num = Number(numStr); // NaN
 assertFiniteNumber(num); // throws
-obj[num] = "yup" // disaster averted
+arr[num] = "yup" // disaster averted
 ```
