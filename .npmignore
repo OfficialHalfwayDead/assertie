@@ -1,4 +1,6 @@
 node_modules/
+manual_test/
 changelog-template.md
+migration-guide-template.md
 package-lock.json
 vite.config.ts

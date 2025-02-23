@@ -154,6 +154,28 @@ const safeObj = obj;
 
 The reason an array is needed here is because undefined properties may not be present in `Object.keys`, so the caller needs to provide all keys to check. Don't worry about the safety, though. If you forget to pass a key, its type will remain nullable after the assert and TypeScript will not consider it safe to access.
 
+### Arrays and tuples
+
+Arrays and tuples have equivalent versions of `assertType` and `assertNonNullable`. These make it easy to check every element at once and get great errors and type narrowing.
+
+```ts
+const arr: (number | string | null)[] = [1, 2, 3];
+assertArrayNonNullable(arr); // narrows to (number | string)[]
+assertArrayType(arr, "number"); // narrows to number[]
+```
+
+```ts
+const arr: number[] = [1, 2, 3];
+assertIsTuple(arr, 3); // narrows to [number, number, number]
+
+const arrMixed: (number | string | null)[] = [1, "a"];
+assertIsTuple(arrMixed, 2); // narrows to [T, T]
+// where T = number | string | null;
+assertTupleNonNullable(arrMixed); // narrows T to number | string
+assertTupleTypes(arrMixed, ["number", "string"]);
+const tup: [number, string] = arrMixed;
+```
+
 ### Asserting unreachable code
 
 The unreachable assertion will
