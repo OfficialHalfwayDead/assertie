@@ -16,7 +16,7 @@ declare type NullableKeys<T> = {
 declare type PropsNonNullable<T, N extends NullableKeys<T>> = T & {
     [K in N]-?: NonNullable<T[K]>;
 };
-declare type Constructor<T> = new (...args: unknown[]) => T;
+declare type Constructor<T> = new (...args: any[]) => T;
 declare type AllJSTypes = PrimitiveTypeStrings | null | undefined | Constructor<unknown>;
 declare type ResolveAnyJSType<T extends AllJSTypes> = T extends PrimitiveTypeStrings ? PrimitiveTypes[T] : T extends null ? null : T extends undefined ? undefined : T extends Constructor<infer U> ? U : never;
 /**

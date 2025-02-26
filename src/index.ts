@@ -22,7 +22,7 @@ type PropsNonNullable<T, N extends NullableKeys<T>> = T & {
     [K in N]-?: NonNullable<T[K]>;
 };
 
-type Constructor<T> = new (...args: unknown[]) => T;
+type Constructor<T> = new (...args: any[]) => T;
 
 type AllJSTypes = PrimitiveTypeStrings | null | undefined | Constructor<unknown>;
 
