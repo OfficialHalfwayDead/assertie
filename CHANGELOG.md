@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.2](https://github.com/OfficialHalfwayDead/assertie/compare/v0.3.1...v0.3.2) (2025-02-27)
+
+* [`0814dd2`](https://github.com/OfficialHalfwayDead/assertie/commit/0814dd2a6b9daf2bbeb99e2925710cc8a76caf07) Bugfix: Constructor type wasn't properly typed and prevent `assertInstanceOf` and `assertType` from accepting many construcable types.
+* [`940e4e4`](https://github.com/OfficialHalfwayDead/assertie/commit/940e4e424c14db20734ed4e2ec2b8a6eeae3aef3) Clarify SSR vite settings and Svelte/Proxy pitfalls in the README.
+
+
 ## [0.3.1](https://github.com/OfficialHalfwayDead/assertie/compare/v0.3.0...v0.3.1) (2025-02-23)
 
 * [`0d59837`](https://github.com/OfficialHalfwayDead/assertie/commit/0d59837841707c963ce174e79a527fcb1379ac4f) Add array and tuple assertions to the README.
