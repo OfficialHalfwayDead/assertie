@@ -29,6 +29,23 @@ clone.innerText = "No `as` cast needed! 0 overhead in production.";
 npm i -D assertie
 ```
 
+By default, vite will tree-shake the functions in the frontend, but for SSR it will actually not touch libraries unless you specify that the module should not be externalized.
+
+```ts
+// vite.config.ts
+const config: UserConfig = {
+    build: {
+        ssr: { // crucial if you have SSR
+            noExternal: ["assertie"],
+        },
+        rollupOptions: {
+            treeshake: true, // this is default
+            // just make sure it's not explicitly false
+        },
+    },
+};
+```
+
 If you're getting errors when using the package, it's likely because your TypeScript targets are too low:
 
 ```json
@@ -42,18 +59,6 @@ If you're getting errors when using the package, it's likely because your TypeSc
 }
 ```
 
-By default, vite will tree-shake the functions for production, but make sure you haven't specifically disabled it in your vite config:
-
-```ts
-// vite.config.ts
-const config: UserConfig = {
-    build: {
-        rollupOptions: {
-            treeshake: true,
-        },
-    },
-};
-```
 
 ## Usage
 
@@ -76,7 +81,7 @@ const y: true = x; // no error
 ```ts
 import { assertType } from "assertie";
 
-// assertType can take null, undefined, a class/constructable 
+// assertType can take null, undefined, a class/constructable,
 // or a primitive JS type string (e.g., "number")
 assertType(1, "number");
 assertType(() => {}, "function");
@@ -109,7 +114,7 @@ assertInstanceOf(new Date(), Date);
 
 ### Asserting non-null
 
-Sometimes you'll find yourself in a situation where you know from the calling context that a hoisted variable is not `null` or `undefined`, but TypeScript doesn't.
+Sometimes, you'll find yourself in a situation where you know from the calling context that a hoisted variable is not `null` or `undefined`, but TypeScript doesn't.
 
 ```ts
 let hoisted: string | null | undefined = null;
@@ -128,9 +133,9 @@ hoisted = "yup";
 f();
 ```
 
-There are multiple ways in which an assert is better in this specific case:
+There are multiple advantages to using an assertion in this case:
 
-1. Making the code intention clear. `f` was never meant to only run its body some of the time. It is always supposed to work. But the if statement was required to make the compiler happy.
+It clarifies the code's intent. f was never meant to conditionally execute its body. It is always supposed to work, but the if statement was required to satisfy the compiler.
 2. The assert will throw an error in dev if the case that should never happen does happen. Without the assert, any potential behavior change due to `hoisted` not being set is more likely to go unnoticed.
 3. It's a little shorter, mainly if you have to check null and undefined and maybe have prettier rules for { brackets } on if statements.
 4. The assert will be removed in production, so there's no overhead. If that makes you uncomfortable, you can just can still put the if statement below the assert and reap the benefits of the first two points.
@@ -156,7 +161,7 @@ The reason an array is needed here is because undefined properties may not be pr
 
 ### Arrays and tuples
 
-Arrays and tuples have equivalent versions of `assertType` and `assertNonNullable`. These make it easy to check every element at once and get great errors and type narrowing.
+Arrays and tuples have equivalent versions of `assertType` and `assertNonNullable`. These make it easy to check every element at once and provide excellent error messages and type narrowing.
 
 ```ts
 const arr: (number | string | null)[] = [1, 2, 3];
@@ -181,7 +186,7 @@ const tup: [number, string] = arrMixed;
 The unreachable assertion will
 
 1. ensure switch/if statements are exhaustive at compile time.
-2. throw an error at runtime if TypeScript types are inaccurate.
+2. throw an error at runtime if some TypeScript types are inaccurate.
 
 ```ts
 const x: "a" | "b" = "a";
@@ -216,4 +221,43 @@ const numStr = str.substring(11); // oops "t123"
 const num = Number(numStr); // NaN
 assertFiniteNumber(num); // throws
 arr[num] = "yup" // disaster averted
+```
+
+
+## Pitfalls
+
+While assertions will never throw in production, complete removal of the code may not happen if you call another function inside the assertion call:
+
+```js
+assert(object.foo() === "yup");
+
+// bundler leaves this stub:
+function assert(hasToBeTrue, msg = "No specific message provided.") {
+    return;
+}
+```
+
+Since `foo()` might have side effects, it is not possible to remove the entire line. And it seems, the vite bundler **is not capable** of turning the code into:
+
+```ts
+// stays because of potential side effects
+const assertValue = object.foo() === "yup";
+assert(assertValue); // gets removed now
+```
+
+Therefore, you'll have to do that yourself, or if you know `foo()` is a pure function, you can mark it as such:
+
+```ts
+assert(/* @__PURE__ */ object.foo() === "yup");
+```
+
+### Svelte
+
+Accessing the value of a rune `x` compiles to `get(x)`, leading to the same pitfall as above. To prevent this, you need to treat the rune like a function:
+
+```ts
+let rune = $state(1);
+let otherRune = $state(1);
+
+assert(/*@__PURE__*/ rune === /*@__PURE__*/ otherRune);
 ```
