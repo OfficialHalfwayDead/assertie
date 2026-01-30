@@ -19,7 +19,7 @@ if (original === null) return;
 const clone = original.cloneNode(true);
 assertInstanceOf(clone, HTMLElement);
 // Unlike casting, the assert will throw if you were mistaken,
-// or if someone accidentally changed const original = document;
+// or if someone changes const original = document;
 clone.innerText = "No `as` cast needed! 0 overhead in production.";
 ```
 
@@ -253,11 +253,23 @@ assert(/* @__PURE__ */ object.foo() === "yup");
 
 ### Svelte
 
-Accessing the value of a rune `x` compiles to `get(x)`, leading to the same pitfall as above. To prevent this, you need to treat the rune like a function:
+Runes in Svelte are, in reality, proxy objects, with those details hidden from the user by the compiler. Accessing `x` compiles to `get(x)`, which leads to the same pitfall as above. The cleanest solution is to create a local copy when possible:
 
 ```ts
 let rune = $state(1);
-let otherRune = $state(1);
 
-assert(/*@__PURE__*/ rune === /*@__PURE__*/ otherRune);
+// ... local context
+const lcopy = $state.snapshot(rune); // stays
+assertType(lcopy, "string"); // removed by vite in prod
+// only lcopy gets type narrowing, not rune
 ```
+
+Be aware that, by definition, the snapshot is a regular object, and therefore will not be reactive.
+
+In theory, you can also cheat by marking the rune as a pure function when accessing it:
+
+```ts
+assertType(/* @__PURE__ */ rune, "string"); // dangerous
+```
+
+Even with side-effect-free getters, this usage can cause diverging behavior between dev and prod if the Svelte compiler is in a tracking context such as `$effect()`. If you intend to use it this way, you should be absolutely certain that you understand the details of Svelte's behavior.
