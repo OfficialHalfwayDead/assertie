@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "strict": true,
+        "moduleResolution": "node",
+        "noEmit": true,
+        "types": ["node", "vite/client"],
+        "skipLibCheck": true
+    },
+    "include": [
+        "../../src/index.ts",
+        "./testing.ts",
+        "./asserts.test.ts",
+        "./assert-helpers.test.ts",
+        "./main.ts"
+    ]
+}

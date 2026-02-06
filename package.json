@@ -33,10 +33,14 @@
     "vite": ">=2.0.0"
   },
   "devDependencies": {
-    "typescript": "~4.7.0",
-    "vite": "~2.0.0"
+    "@types/node": "24.10.11",
+    "typescript": "4.7.4",
+    "vite": "2.0.5"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "test": "npm run test:runtime",
+    "test:runtime": "npm run test:runtime:check && vite build --mode development -c test/runtime/vite.config.ts && node .test-build/test.js",
+    "test:runtime:check": "tsc -p test/runtime/tsconfig.json"
   }
 }

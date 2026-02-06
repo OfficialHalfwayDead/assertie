@@ -33,14 +33,24 @@ type ResolveAnyJSType<T extends AllJSTypes> = T extends
     : T extends Constructor<infer U> ? U
     : never;
 
-function getNameOfExpectedType(expectedType: AllJSTypes): string {
+/**
+ * Gets the display name of an expected type for error messages.
+ * @param {AllJSTypes} expectedType - The expected type value.
+ * @returns {string} The normalized name of the expected type.
+ */
+export function getNameOfExpectedType(expectedType: AllJSTypes): string {
     if (expectedType === null) return "null";
     if (expectedType === undefined) return "undefined";
     if (typeof expectedType === "string") return expectedType;
     return expectedType.name;
 }
 
-function getTypeNameOfUnknown(item: unknown): string {
+/**
+ * Gets the runtime type name of an unknown item for error messages.
+ * @param {unknown} item - The item whose runtime type name should be determined.
+ * @returns {string} The runtime type name of item.
+ */
+export function getTypeNameOfUnknown(item: unknown): string {
     if (item === null) return "null";
     if (item === undefined) return "undefined";
     try {
@@ -54,7 +64,13 @@ function getTypeNameOfUnknown(item: unknown): string {
     }
 }
 
-function isType<T extends AllJSTypes>(item: unknown, expectedType: T): item is ResolveAnyJSType<T> {
+/**
+ * Checks whether the provided item is of the expectedType.
+ * @param {unknown} item - The item to check.
+ * @param {AllJSTypes} expectedType - The expected type to check against.
+ * @returns {boolean} `true` if item's type matches expectedType.
+ */
+export function isType<T extends AllJSTypes>(item: unknown, expectedType: T): item is ResolveAnyJSType<T> {
     if (typeof item === expectedType) return true;
     const reducedExpectedType = expectedType as Exclude<typeof expectedType, PrimitiveTypeStrings>;
 
@@ -66,7 +82,10 @@ function isType<T extends AllJSTypes>(item: unknown, expectedType: T): item is R
     return false;
 }
 
-class AssertionError extends Error {
+/**
+ * Error thrown by all assertie assertions when they fail.
+ */
+export class AssertionError extends Error {
     constructor(msg: string) {
         super(`Assertion failed: ${msg}`);
         this.name = AssertionError.name;
@@ -88,9 +107,9 @@ export function assert(
 }
 
 /**
- * Asserts that the provided object is of the expectedType.
- * @param {unknown} item - The object which ought to be of the expectedType.
- * @param {AllJSTypes} expectedType - The expected type of the object. JS primitive types, null, undefined, and constructable types are supported. JS primitive types are passed as the string they return from typeof, e.g., "number".
+ * Asserts that the provided item is of the expectedType.
+ * @param {unknown} item - The item which ought to be of the expectedType.
+ * @param {AllJSTypes} expectedType - The expected type of the item. JS primitive types, null, undefined, and constructable types are supported. JS primitive types are passed as the string they return from typeof, e.g., "number".
  * @throws {AssertionError} if the type isn't as expected.
  */
 export function assertType<T extends AllJSTypes>(
@@ -107,8 +126,8 @@ export function assertType<T extends AllJSTypes>(
 }
 
 /**
- * Asserts that all elements of the provided array are of the expected type. It ensures that the array is not sparse (even when the expectedType is undefined).
- * @param {unknown[]} arr - The array which ought to be an array of the expectedType, i.e. expectedType: "number" => arr: number[]
+ * Asserts that all elements of the provided array are of the expected type. It ensures that the array is not sparse up to arr.length (even when the expectedType is undefined).
+ * @param {unknown[]} arr - The array which ought to be an array of the expectedType, i.e. expectedType: "number" means `arr: number[]`.
  * @param {AllJSTypes} expectedType - The expected type of individual items. JS primitive types, null, undefined, and constructable types are supported.
  * @throws {AssertionError} if the type isn't as expected.
  */
@@ -134,15 +153,15 @@ export function assertArrayType<T extends AllJSTypes>(
 
 /**
  * Asserts that the array or tuple has the expected types at each index.
- * @param {unknown[] | [unknown, ...]} arrayOrTuple - The tuple which ought to be an array of the length and types.
- * @param {[AllJSTypes, ...]} expectedTypes - A tuple of expected types of individual items, e.g., expectedTypes = ["number", "string", Date] => arrayOrTuple: [number, string, Date]. The individual entries can be JS primitive types, null, undefined, and constructors.
+ * @param {unknown[] | [unknown, ...]} arrayOrTuple - The tuple which ought to be an array of the expected length and types.
+ * @param {[AllJSTypes, ...]} expectedTypes - A tuple of expected types of individual items, e.g., `expectedTypes = ["number", "string", Date]` means `arrayOrTuple: [number, string, Date]`. The individual entries can be JS primitive types, null, undefined, and constructors.
  * @throws {AssertionError} if the type of any element of the tuple isn't as expected.
  */
 export function assertTupleTypes<
     T extends readonly AllJSTypes[],
     U extends
-        | { [K in keyof T]: unknown } // [...unknown] matching length of [...T]
-        | (number extends U["length"] ? unknown[] : never) // Array with compile time unknown length
+    | { [K in keyof T]: unknown } // [...unknown] matching length of [...T]
+    | (number extends U["length"] ? unknown[] : never) // Array with compile time unknown length
 >(
     arrayOrTuple: U,
     expectedTypes: readonly [...T]
@@ -338,10 +357,7 @@ export function assertUnreachable(
 ): asserts item is never {
     if (!import.meta.env.DEV) return;
     throw new AssertionError(
-        msg +
-            `\nValue of type never was actually of type: ${getTypeNameOfUnknown(
-                item
-            )}, value: ${item}`
+        msg + `\nValue of type never was actually of type: ${getTypeNameOfUnknown(item)}, value: ${item}`
     );
 }
 
@@ -376,9 +392,7 @@ export function assertPropsNonNullable<T extends object, N extends NullableKeys<
             );
         if (obj[propKey] === null || obj[propKey] === undefined)
             throw new AssertionError(
-                `Provided object prop ${String(propKey)} should've been non-null but was: ${
-                    obj[propKey]
-                }`
+                `Provided object prop ${String(propKey)} should've been non-null but was: ${obj[propKey]}`
             );
     }
 }

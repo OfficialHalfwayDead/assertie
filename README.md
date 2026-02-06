@@ -48,7 +48,7 @@ const config: UserConfig = {
 
 If you're getting errors when using the package, it's likely because your TypeScript targets are too low:
 
-```json
+```jsonc
 // tsconfig.json
 {
     "compilerOptions": {

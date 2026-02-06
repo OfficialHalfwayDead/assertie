@@ -1,4 +1,5 @@
 node_modules/
+.test-build/
 manual_test/
 changelog-template.md
 migration-guide-template.md
