@@ -52,15 +52,21 @@ export function getNameOfExpectedType(expectedType: AllJSTypes): string {
  */
 export function getTypeNameOfUnknown(item: unknown): string {
     if (item === null) return "null";
-    if (item === undefined) return "undefined";
-    try {
-        if (item instanceof item.constructor && item.constructor.name !== "Function") {
-            // I'd like function to match the primitive name "function"
-            // because that's how the asserts are written.
-            return item.constructor.name;
-        }
-    } finally {
-        return typeof item;
+    const type = typeof item;
+    switch (type) {
+        case "object":
+        case "function":
+            try {
+                const unsafe: any = item; // We are using try catch for the fail cases
+                if (unsafe instanceof unsafe.constructor) {
+                    return unsafe.constructor.name;
+                }
+            } catch {
+            }
+            const typeStr = Object.prototype.toString.call(item);
+            return typeStr.slice(8, -1); // "[object Type]" -> "Type"
+        default:
+            return type;
     }
 }
 
@@ -71,13 +77,20 @@ export function getTypeNameOfUnknown(item: unknown): string {
  * @returns {boolean} `true` if item's type matches expectedType.
  */
 export function isType<T extends AllJSTypes>(item: unknown, expectedType: T): item is ResolveAnyJSType<T> {
-    if (typeof item === expectedType) return true;
-    const reducedExpectedType = expectedType as Exclude<typeof expectedType, PrimitiveTypeStrings>;
+    if (typeof item === expectedType) return true; // correct primitive type
+    // Now, if the expectedType is a PrimitiveTypeString,
+    // the item is guaranteed to be of the wrong type since it didn't match the typeof check above
+    if (typeof expectedType === "string") return false;
+    const expectedUndefNullOrConstructor = expectedType as Exclude<typeof expectedType, PrimitiveTypeStrings>;
 
-    if (item === reducedExpectedType) return true;
-    const remainingOption = expectedType as Exclude<typeof reducedExpectedType, null | undefined>;
+    // The type restriction on T guarantees that item is now either undefined, null, or a constructor
+    if (item === expectedUndefNullOrConstructor) return true; // correct undefined, null, or constructor of itself
+    // i.e. const MyType = Date; isType(Date, Date) && isType(MyType, Date) are both true
+    if (expectedUndefNullOrConstructor === null || expectedUndefNullOrConstructor === undefined) return false;
+    const expectedConstructor = expectedType as Exclude<typeof expectedUndefNullOrConstructor, null | undefined>;
 
-    if (item instanceof remainingOption) return true;
+    // Lastly, check if the item is an instance of the provided constructor
+    if (item instanceof expectedConstructor) return true;
 
     return false;
 }
