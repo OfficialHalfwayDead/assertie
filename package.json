@@ -39,8 +39,9 @@
   },
   "scripts": {
     "build": "tsc",
-    "test": "npm run test:runtime",
+    "test": "npm run test:runtime && npm run test:types",
     "test:runtime": "npm run test:runtime:check && vite build --mode development -c test/runtime/vite.config.ts && node .test-build/test.js",
-    "test:runtime:check": "tsc -p test/runtime/tsconfig.json"
+    "test:runtime:check": "tsc -p test/runtime/tsconfig.json",
+    "test:types": "node test/types/run.ts"
   }
 }

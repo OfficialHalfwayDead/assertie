@@ -2,13 +2,16 @@
 type Tuple<T, N extends number, A extends unknown[] = []> =
     A["length"] extends N ? A : Tuple<T, N, [...A, T]>;
 
+type UnknownFunction = (...args: any[]) => unknown;
+type Constructor<T> = new (...args: any[]) => T;
+
 type PrimitiveTypes = {
     "string": string;
     "number": number;
     "boolean": boolean;
     "bigint": bigint;
     "undefined": undefined;
-    "function": Function;
+    "function": UnknownFunction;
     "object": object;
     "symbol": symbol;
 };
@@ -22,11 +25,9 @@ type PropsNonNullable<T, N extends NullableKeys<T>> = T & {
     [K in N]-?: NonNullable<T[K]>;
 };
 
-type Constructor<T> = new (...args: any[]) => T;
-
 type AllJSTypes = PrimitiveTypeStrings | null | undefined | Constructor<unknown>;
 
-type ResolveAnyJSType<T extends AllJSTypes> = T extends 
+type ResolveAnyJSType<T extends AllJSTypes> = T extends
     | PrimitiveTypeStrings ? PrimitiveTypes[T]
     : T extends null ? null
     : T extends undefined ? undefined
@@ -271,7 +272,7 @@ export function assertTypeOfUndefined(item: unknown): asserts item is undefined 
  * @param {unknown} item - The item which ought to be of type function.
  * @throws {AssertionError} if the type isn't function.
  */
-export function assertTypeOfFunction(item: unknown): asserts item is Function {
+export function assertTypeOfFunction(item: unknown): asserts item is UnknownFunction {
     if (!import.meta.env.DEV) return;
     if (typeof item !== "function")
         throw new AssertionError(

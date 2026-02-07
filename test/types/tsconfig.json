@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+      "target": "ESNext",
+      "module": "ESNext",
+      "strict": true,
+      "moduleResolution": "node",
+      "noEmit": true,
+      "types": ["vite/client"],
+      "skipLibCheck": true
+  },
+  "include": [
+    "../../src/index.ts",
+    "./type-narrowing.test.ts",
+    "./type-narrowing.5+.test.ts",
+  ],
+}

@@ -1,0 +1,6 @@
+{
+    "extends": "./tsconfig.json",
+    "exclude": [
+        "./type-narrowing.5+.test.ts",
+    ],
+}
