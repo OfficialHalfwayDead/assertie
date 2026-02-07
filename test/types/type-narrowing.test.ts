@@ -112,12 +112,27 @@ import {
     _date = x;
 }
 { // narrows unknown to custom class instance
-    class CustomClass {}
-    const x: unknown = new CustomClass();
+    class CustomClass {
+        constructor(_: string) {}
+    }
+    const x: unknown = new CustomClass("test");
     // @ts-expect-error
     let _custom: CustomClass = x;
     assertType(x, CustomClass);
     _custom = x;
+}
+{ // narrows unknown to abstract class instance
+    abstract class BaseClass {
+        abstract label: string;
+    }
+    class ConcreteClass extends BaseClass {
+        label = "ok";
+    }
+    const x: unknown = new ConcreteClass();
+    // @ts-expect-error
+    let _base: BaseClass = x;
+    assertType(x, BaseClass);
+    _base = x;
 }
 
 /* ==================== assertArrayType ==================== */
@@ -377,12 +392,27 @@ import {
     _error = x;
 }
 { // narrows unknown to custom class
-    class MyClass {}
-    const x: unknown = new MyClass();
+    class MyClass {
+        constructor(_: string) {}
+    }
+    const x: unknown = new MyClass("test");
     // @ts-expect-error
     let _myClass: MyClass = x;
     assertInstanceOf(x, MyClass);
     _myClass = x;
+}
+{ // narrows unknown to abstract base class
+    abstract class BaseClass {
+        abstract label: string;
+    }
+    class ConcreteClass extends BaseClass {
+        label = "ok";
+    }
+    const x: unknown = new ConcreteClass();
+    // @ts-expect-error
+    let _base: BaseClass = x;
+    assertInstanceOf(x, BaseClass);
+    _base = x;
 }
 { // narrows Node to HTMLElement
     const x: Node = new HTMLElement();

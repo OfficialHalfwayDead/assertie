@@ -3,7 +3,7 @@ type Tuple<T, N extends number, A extends unknown[] = []> =
     A["length"] extends N ? A : Tuple<T, N, [...A, T]>;
 
 type UnknownFunction = (...args: any[]) => unknown;
-type Constructor<T> = new (...args: any[]) => T;
+type Constructor<T> = abstract new (...args: any[]) => T;
 
 type PrimitiveTypes = {
     "string": string;
