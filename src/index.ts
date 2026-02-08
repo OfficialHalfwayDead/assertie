@@ -1,6 +1,8 @@
 // Creates a tuple of length N with all elements of type T
 type Tuple<T, N extends number, A extends unknown[] = []> =
     A["length"] extends N ? A : Tuple<T, N, [...A, T]>;
+type ReadonlyTuple<T, N extends number, A extends readonly unknown[] = readonly []> =
+    A["length"] extends N ? A : ReadonlyTuple<T, N, readonly [...A, T]>;
 
 type UnknownFunction = (...args: any[]) => unknown;
 type Constructor<T> = abstract new (...args: any[]) => T;
@@ -141,14 +143,22 @@ export function assertType<T extends AllJSTypes>(
 
 /**
  * Asserts that all elements of the provided array are of the expected type. It ensures that the array is not sparse up to arr.length (even when the expectedType is undefined).
- * @param {unknown[]} arr - The array which ought to be an array of the expectedType, i.e. expectedType: "number" means `arr: number[]`.
+ * @param {unknown[]} arr - The array which ought to be an array of the expectedType, i.e. expectedType: "number" means `arr: number[]`. Preserves readonly when specified.
  * @param {AllJSTypes} expectedType - The expected type of individual items. JS primitive types, null, undefined, and constructable types are supported.
  * @throws {AssertionError} if the type isn't as expected.
  */
 export function assertArrayType<T extends AllJSTypes>(
     arr: unknown[],
     expectedType: T
-): asserts arr is ResolveAnyJSType<T>[] {
+): asserts arr is ResolveAnyJSType<T>[];
+export function assertArrayType<T extends AllJSTypes>(
+    arr: readonly unknown[],
+    expectedType: T
+): asserts arr is readonly ResolveAnyJSType<T>[];
+export function assertArrayType<T extends AllJSTypes>(
+    arr: unknown[] | readonly unknown[],
+    expectedType: T
+): asserts arr is ResolveAnyJSType<T>[] | readonly ResolveAnyJSType<T>[] {
     if (!import.meta.env.DEV) return;
     for (let i = 0; i < arr.length; i++) {
         if (!(i in arr))
@@ -165,9 +175,12 @@ export function assertArrayType<T extends AllJSTypes>(
     }
 }
 
+type ResolveTuple<T extends readonly AllJSTypes[], U> = U & { [K in keyof T]: ResolveAnyJSType<T[K]> };
+type ResolveReadonlyTuple<T extends readonly AllJSTypes[], U> = U & { readonly [K in keyof T]: ResolveAnyJSType<T[K]> };
+
 /**
  * Asserts that the array or tuple has the expected types at each index.
- * @param {unknown[] | [unknown, ...]} arrayOrTuple - The tuple which ought to be an array of the expected length and types.
+ * @param {unknown[] | [unknown, ...]} arrayOrTuple - The tuple which ought to be an array of the expected length and types. Preserves readonly when specified.
  * @param {[AllJSTypes, ...]} expectedTypes - A tuple of expected types of individual items, e.g., `expectedTypes = ["number", "string", Date]` means `arrayOrTuple: [number, string, Date]`. The individual entries can be JS primitive types, null, undefined, and constructors.
  * @throws {AssertionError} if the type of any element of the tuple isn't as expected.
  */
@@ -179,7 +192,27 @@ export function assertTupleTypes<
 >(
     arrayOrTuple: U,
     expectedTypes: readonly [...T]
-): asserts arrayOrTuple is U & { [K in keyof T]: ResolveAnyJSType<T[K]> } {
+): asserts arrayOrTuple is ResolveTuple<T, U>;
+export function assertTupleTypes<
+    T extends readonly AllJSTypes[],
+    U extends
+    | { readonly [K in keyof T]: unknown } // [...unknown] matching length of [...T]
+    | (number extends U["length"] ? readonly unknown[] : never) // Array with compile time unknown length
+>(
+    arrayOrTuple: U,
+    expectedTypes: readonly [...T]
+): asserts arrayOrTuple is ResolveReadonlyTuple<T, U>;
+export function assertTupleTypes<
+    T extends readonly AllJSTypes[],
+    U extends
+    | { [K in keyof T]: unknown } // [...unknown] matching length of [...T]
+    | { readonly [K in keyof T]: unknown } // [...unknown] matching length of [...T]
+    | (number extends U["length"] ? unknown[] : never) // Array with compile time unknown length
+    | (number extends U["length"] ? readonly unknown[] : never) // Array with compile time unknown length
+>(
+    arrayOrTuple: U,
+    expectedTypes: readonly [...T]
+): asserts arrayOrTuple is ResolveTuple<T, U> | ResolveReadonlyTuple<T, U> {
     if (!import.meta.env.DEV) return;
     if (arrayOrTuple.length !== expectedTypes.length) {
         throw new AssertionError(
@@ -344,7 +377,15 @@ export function assertInstanceOf<T>(item: unknown, constructor: Constructor<T>):
 export function assertIsTuple<
     T,
     N extends number
->(arr: T[], expectedLength: N): asserts arr is Tuple<T, N> {
+>(arr: T[], expectedLength: N): asserts arr is Tuple<T, N>;
+export function assertIsTuple<
+    T,
+    N extends number
+>(arr: readonly T[], expectedLength: N): asserts arr is ReadonlyTuple<T, N>;
+export function assertIsTuple<
+    T,
+    N extends number
+>(arr: T[] | readonly T[], expectedLength: N): asserts arr is Tuple<T, N> | ReadonlyTuple<T, N> {
     if (!import.meta.env.DEV) return;
     if (arr.length !== expectedLength) {
         throw new AssertionError(
@@ -413,10 +454,12 @@ export function assertPropsNonNullable<T extends object, N extends NullableKeys<
 
 /**
  * Asserts that all elements of the provided array are neither null nor undefined, or not present.
- * @param {unknown[]} arr - The array which ought to be non-sparse, and have only non-null elements.
+ * @param {unknown[]} arr - The array which ought to be non-sparse, and have only non-null elements. Preserves readonly when specified.
  * @throws {AssertionError} if any of the elements was null, undefined, or not present in the array.
  */
-export function assertArrayNonNullable<T>(arr: T[]): asserts arr is NonNullable<T>[] {
+export function assertArrayNonNullable<T>(arr: T[]): asserts arr is NonNullable<T>[];
+export function assertArrayNonNullable<T>(arr: readonly T[]): asserts arr is readonly NonNullable<T>[];
+export function assertArrayNonNullable<T>(arr: T[] | readonly T[]): asserts arr is NonNullable<T>[] | readonly NonNullable<T>[] {
     if (!import.meta.env.DEV) return;
     for (let i = 0; i < arr.length; i++) {
         if (!(i in arr))
@@ -440,6 +483,12 @@ export function assertArrayNonNullable<T>(arr: T[]): asserts arr is NonNullable<
  * @param {[unknown, ...]} tuple - The tuple which ought to have only non-null values.
  * @throws {AssertionError} if any of the elements was null, undefined, or an index not present in the tuple.
  */
+export function assertTupleNonNullable<T extends number extends T["length"] ? never : unknown[]>(
+    tuple: T
+): asserts tuple is { [K in keyof T]: NonNullable<T[K]> };
+export function assertTupleNonNullable<T extends number extends T["length"] ? never : readonly unknown[]>(
+    tuple: T
+): asserts tuple is { [K in keyof T]: NonNullable<T[K]> };
 export function assertTupleNonNullable<T extends number extends T["length"] ? never : unknown[]>(
     tuple: T
 ): asserts tuple is { [K in keyof T]: NonNullable<T[K]> } {

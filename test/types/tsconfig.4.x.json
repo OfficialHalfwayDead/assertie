@@ -2,5 +2,6 @@
     "extends": "./tsconfig.json",
     "exclude": [
         "./type-narrowing.5+.test.ts",
+        "./readonly.5+.test.ts",
     ],
 }
