@@ -342,9 +342,9 @@ export function assertInstanceOf<T>(item: unknown, constructor: Constructor<T>):
  * @throws {AssertionError} if the array isn't of the expected length or is sparse.
  */
 export function assertIsTuple<
-    T extends number extends T["length"] ? unknown[] : never,
+    T,
     N extends number
->(arr: [...T], expectedLength: N): asserts arr is T & Tuple<T[number], N> {
+>(arr: T[], expectedLength: N): asserts arr is Tuple<T, N> {
     if (!import.meta.env.DEV) return;
     if (arr.length !== expectedLength) {
         throw new AssertionError(

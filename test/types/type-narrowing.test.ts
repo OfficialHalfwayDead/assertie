@@ -424,26 +424,35 @@ import {
 
 /* ==================== assertIsTuple ==================== */
 
-{ // narrows array to tuple of length 2
+{ // narrows number[] array to tuple
     const arr: number[] = [1, 2];
     // @ts-expect-error
     let _tuple: [number, number] = arr;
     assertIsTuple(arr, 2);
     _tuple = arr;
+    arr[1];
+    // @ts-expect-error
+    arr[2];
 }
-{ // narrows array to tuple of length 3
+{ // narrows string array to tuple
     const arr: string[] = ["a", "b", "c"];
     // @ts-expect-error
     let _tuple: [string, string, string] = arr;
     assertIsTuple(arr, 3);
     _tuple = arr;
+    arr[2];
+    // @ts-expect-error
+    arr[3];
 }
-{ // narrows array to tuple of length 1
+{ // narrows boolean array to tuple
     const arr: boolean[] = [true];
     // @ts-expect-error
     let _tuple: [boolean] = arr;
     assertIsTuple(arr, 1);
     _tuple = arr;
+    arr[0];
+    // @ts-expect-error
+    arr[1];
 }
 { // narrows mixed array to tuple
     const arr: (number | string)[] = [1, "a"];
@@ -451,6 +460,9 @@ import {
     let _tuple: [number | string, number | string] = arr;
     assertIsTuple(arr, 2);
     _tuple = arr;
+    arr[1];
+    // @ts-expect-error
+    arr[2];
 }
 
 /* ==================== assertUnreachable ==================== */
