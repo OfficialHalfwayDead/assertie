@@ -135,7 +135,7 @@ f();
 
 There are multiple advantages to using an assertion in this case:
 
-It clarifies the code's intent. f was never meant to conditionally execute its body. It is always supposed to work, but the if statement was required to satisfy the compiler.
+1. It clarifies the code's intent. f was never meant to conditionally execute its body. It is always supposed to work, but the if statement was required to satisfy the compiler.
 2. The assert will throw an error in dev if the case that should never happen does happen. Without the assert, any potential behavior change due to `hoisted` not being set is more likely to go unnoticed.
 3. It's a little shorter, mainly if you have to check null and undefined and maybe have prettier rules for { brackets } on if statements.
 4. The assert will be removed in production, so there's no overhead. If that makes you uncomfortable, you can just can still put the if statement below the assert and reap the benefits of the first two points.
