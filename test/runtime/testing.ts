@@ -1,6 +1,6 @@
 import { inspect } from "node:util";
 import type { InspectOptions } from "node:util";
-import { AssertionError } from "../../src/index";
+import { AssertieError } from "../../src/index";
 
 // For grouping and executing a test case
 type GroupingClosure = () => void;
@@ -80,17 +80,17 @@ export function mustNotThrow(fn: () => unknown): void {
 }
 
 /**
- * Asserts that the provided closure throws an AssertionError.
+ * Asserts that the provided closure throws an AssertieError.
  * @param {TestFn} fn - The closure that should throw.
  * @param {RegExp} matcher - Optional regex that must match the thrown error message.
- * @throws {TestFailure} if no error is thrown, a non-AssertionError is thrown, or the message does not match.
+ * @throws {TestFailure} if no error is thrown, a non-AssertieError is thrown, or the message does not match.
  */
 export function mustThrow(fn: () => unknown, matcher?: RegExp): void {
     try {
         fn();
     } catch (error: unknown) {
-        if (!(error instanceof AssertionError)) {
-            fail(`Expected thrown value to be ${AssertionError.name}, got: ${inspect(error, INSPECT_OPTIONS)}`);
+        if (!(error instanceof AssertieError)) {
+            fail(`Expected thrown value to be ${AssertieError.name}, got: ${inspect(error, INSPECT_OPTIONS)}`);
         }
         if (matcher !== undefined && !matcher.test(error.message)) {
             fail(`Expected error message to match ${matcher}, got: "${error.message}"`);
