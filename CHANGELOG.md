@@ -1,8 +1,31 @@
 # Changelog
 
+## [1.0.0](https://github.com/OfficialHalfwayDead/assertie/compare/v0.3.2...v1.0.0) (2026-02-15)
+
+### Breaking Changes
+
+* [`a04c1be`](https://github.com/OfficialHalfwayDead/assertie/commit/a04c1be1f86d6280ce925dff8c5b0fdef6811660) Rename AssertionError to AssertieError to reduce the likelihood of name conflicts.
+* [`e91af47`](https://github.com/OfficialHalfwayDead/assertie/commit/e91af47062b6255dd415b5fcbbd6768ac836beb4) Changed the type that functions get narrowed to, so that they return `unknown` when called instead of `any`. This only affects cases where the TypeScript has no other way of inferring the true return type.
+
+### Features
+
+* [`2c021d7`](https://github.com/OfficialHalfwayDead/assertie/commit/2c021d7796e1d1e1663f0149d3ada35d9f0b744d) Enable passing abstract classes to `assertType` and `assertInstanceOf`.
+* [`f307a3f`](https://github.com/OfficialHalfwayDead/assertie/commit/f307a3f28fe8dbb9b2f992578fda796006839dd3) Improve `assertIsTuple` narrowing. The narrowed type now results in TypeScript errors when trying to read/write to an index higher than the asserted tuple length.
+* [`d76b312`](https://github.com/OfficialHalfwayDead/assertie/commit/d76b31211e0e5e91673a3d2ac84b2088ba00d89d) Allow passing readonly arrays and tuples and preserve their readonlyness. Objects with readonly params were already working.
+
+### Other
+
+* [`2a91906`](https://github.com/OfficialHalfwayDead/assertie/commit/2a9190653f6c32efca5a5abf7e951e0635608f30) Add runtime tests for all assertion functions and internal helpers.
+* [`e91af47`](https://github.com/OfficialHalfwayDead/assertie/commit/e91af47062b6255dd415b5fcbbd6768ac836beb4) Add type tests for the type narrowing of assertions.
+* [`b24849e`](https://github.com/OfficialHalfwayDead/assertie/commit/b24849eeb9bc6db291d95212b3cfa736d2136c3d) Bugfix: Internal functions getTypeNameOfUnknown and isType
+  * Fix issues where getTypeNameOfUnknown returns an underspecified or
+  unexpected type, leading to assertions with poor error messages.
+  * Fix an issue where isType throws instead of returning false, leading to assertions throwing an exception of the wrong type with a poor error message.
+* [`7c8ffd3`](https://github.com/OfficialHalfwayDead/assertie/commit/7c8ffd33771e38f9f8fe95e4bff62a3f96edd0df) Improve Svelte pitfalls explanation in README.
+
 ## [0.3.2](https://github.com/OfficialHalfwayDead/assertie/compare/v0.3.1...v0.3.2) (2025-02-27)
 
-* [`0814dd2`](https://github.com/OfficialHalfwayDead/assertie/commit/0814dd2a6b9daf2bbeb99e2925710cc8a76caf07) Bugfix: Constructor type wasn't properly typed and prevent `assertInstanceOf` and `assertType` from accepting many construcable types.
+* [`0814dd2`](https://github.com/OfficialHalfwayDead/assertie/commit/0814dd2a6b9daf2bbeb99e2925710cc8a76caf07) Bugfix: Constructor type wasn't properly typed and prevented `assertInstanceOf` and `assertType` from accepting many constructible types.
 * [`940e4e4`](https://github.com/OfficialHalfwayDead/assertie/commit/940e4e424c14db20734ed4e2ec2b8a6eeae3aef3) Clarify SSR vite settings and Svelte/Proxy pitfalls in the README.
 
 

@@ -1,5 +1,6 @@
 node_modules/
 manual_test/
+.test-build/
 changelog-template.md
 migration-guide-template.md
 package-lock.json
