@@ -21,6 +21,7 @@ const require = createRequire(import.meta.url);
 const tscPath = require.resolve('typescript/lib/tsc.js');
 const result = spawnSync(process.execPath, [tscPath, '-p', tsconfigPath], { stdio: 'inherit' });
 
+console.log((result.status === 0) ? 'TypeScript tests passed!' : 'TypeScript tests failed!');
 if (result.error) {
   throw result.error;
 }

@@ -3,7 +3,7 @@ import {
     getNameOfExpectedType,
     getTypeNameOfUnknown,
     isType,
-} from "../../src/index";
+} from "../../src/assert-helpers";
 
 group("getNameOfExpectedType", () => {
     group("primitive type strings", () => {
